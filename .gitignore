@@ -4,6 +4,8 @@
 ### dotenv ###
 .env
 
+db.json
+
 ### react ###
 .DS_*
 *.log
