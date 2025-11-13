@@ -385,3 +385,13 @@ select.select-input {
     grid-template-columns: 1fr;
   }
 }
+.more-btn {
+  margin-top: 8px;
+  width: 100%;
+}
+.card-header-row {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  gap: 16px;
+}
