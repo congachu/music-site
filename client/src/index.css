@@ -1,0 +1,387 @@
+:root {
+  color-scheme: dark;
+  --bg: #050509;
+  --bg-elevated: #15151d;
+  --bg-elevated-soft: #171821;
+  --border-subtle: #262637;
+  --text-main: #f7f7ff;
+  --text-sub: #a3a4b5;
+  --accent: #ff7710;   /* 너가 좋아하던 BI 색 */
+  --accent-soft: rgba(255, 119, 16, 0.16);
+  --danger: #ff4f64;
+  --radius-lg: 16px;
+  --radius-md: 10px;
+  --radius-sm: 6px;
+  --shadow-soft: 0 18px 40px rgba(0, 0, 0, 0.55);
+  --font-main: system-ui, -apple-system, BlinkMacSystemFont, "Pretendard",
+    "Segoe UI", sans-serif;
+}
+
+*,
+*::before,
+*::after {
+  box-sizing: border-box;
+}
+
+html,
+body,
+#root {
+  height: 100%;
+  margin: 0;
+  padding: 0;
+}
+
+body {
+  font-family: var(--font-main);
+  background: radial-gradient(circle at top, #1c1b23 0, #050509 55%);
+  color: var(--text-main);
+}
+
+/* 공통 레이아웃 */
+
+.app-root {
+  min-height: 100vh;
+  display: flex;
+  align-items: stretch;
+  justify-content: center;
+  padding: 24px;
+}
+
+.app-shell {
+  width: 100%;
+  max-width: 1200px;
+  background: linear-gradient(145deg, #090910, #111119);
+  border-radius: 24px;
+  padding: 20px 22px 26px;
+  box-shadow: var(--shadow-soft);
+  border: 1px solid rgba(255, 255, 255, 0.04);
+  display: flex;
+  flex-direction: column;
+  gap: 18px;
+}
+
+/* 헤더 */
+
+.app-header {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  padding-bottom: 10px;
+  border-bottom: 1px solid rgba(255, 255, 255, 0.04);
+}
+
+.logo-area {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+}
+
+.logo-dot {
+  width: 28px;
+  height: 28px;
+  border-radius: 999px;
+  background: radial-gradient(circle at 30% 0%, #ffe7cf, #ff7710 45%, #e34600);
+  box-shadow: 0 0 24px rgba(255, 119, 16, 0.7);
+}
+
+.logo-text {
+  font-weight: 700;
+  font-size: 20px;
+  letter-spacing: 0.03em;
+}
+
+.header-right {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+}
+
+.user-chip {
+  padding: 6px 10px;
+  border-radius: 999px;
+  background: rgba(255, 255, 255, 0.04);
+  border: 1px solid rgba(255, 255, 255, 0.06);
+  font-size: 13px;
+}
+
+/* 메인 레이아웃 */
+
+.layout {
+  display: grid;
+  grid-template-columns: minmax(260px, 360px) minmax(0, 1fr);
+  gap: 18px;
+  margin-top: 6px;
+}
+
+.left-pane,
+.right-pane {
+  display: flex;
+  flex-direction: column;
+  gap: 14px;
+}
+
+/* 카드 */
+
+.card {
+  background: radial-gradient(circle at top left, #252536, #12121a 55%);
+  border-radius: var(--radius-lg);
+  padding: 16px 16px 18px;
+  border: 1px solid var(--border-subtle);
+  box-shadow: 0 10px 30px rgba(0, 0, 0, 0.5);
+}
+
+.card-title {
+  font-size: 16px;
+  font-weight: 600;
+  margin: 0 0 4px;
+}
+
+.card-subtitle {
+  margin: 0 0 12px;
+  font-size: 13px;
+  color: var(--text-sub);
+}
+
+/* 폼 / 필드 */
+
+.form-grid {
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+  margin-top: 8px;
+}
+
+.field {
+  display: flex;
+  flex-direction: column;
+  gap: 4px;
+}
+
+.field-label {
+  font-size: 12px;
+  color: var(--text-sub);
+}
+
+.text-input,
+.select-input {
+  background: #11121b;
+  color: var(--text-main);
+  border-radius: var(--radius-md);
+  border: 1px solid rgba(255, 255, 255, 0.08);
+  padding: 8px 10px;
+  font-size: 13px;
+  outline: none;
+  transition: border-color 0.15s ease, box-shadow 0.15s ease,
+    background-color 0.15s ease;
+}
+
+.text-input::placeholder {
+  color: rgba(163, 164, 181, 0.6);
+}
+
+.text-input:focus,
+.select-input:focus {
+  border-color: var(--accent);
+  box-shadow: 0 0 0 1px rgba(255, 119, 16, 0.3);
+  background-color: #0e0e17;
+}
+
+select.select-input {
+  padding-right: 28px;
+}
+
+.filter-row {
+  display: flex;
+  gap: 10px;
+  margin-top: 6px;
+}
+
+/* 버튼 */
+
+.primary-btn {
+  border: none;
+  border-radius: 999px;
+  background: linear-gradient(135deg, #ff8b2e, #ff7710);
+  color: #1a130c;
+  font-weight: 600;
+  font-size: 14px;
+  padding: 9px 14px;
+  cursor: pointer;
+  margin-top: 6px;
+  transition: transform 0.1s ease, box-shadow 0.1s ease,
+    filter 0.1s ease;
+  box-shadow: 0 10px 25px rgba(255, 119, 16, 0.5);
+}
+
+.primary-btn:hover {
+  filter: brightness(1.05);
+  transform: translateY(-1px);
+}
+
+.primary-btn:active {
+  transform: translateY(0);
+  box-shadow: 0 5px 15px rgba(255, 119, 16, 0.35);
+}
+
+.full-width {
+  width: 100%;
+}
+
+.ghost-btn {
+  border-radius: 999px;
+  border: 1px solid rgba(255, 255, 255, 0.12);
+  background: rgba(10, 10, 16, 0.8);
+  color: var(--text-main);
+  font-size: 12px;
+  padding: 6px 10px;
+  cursor: pointer;
+  transition: background 0.15s ease, border-color 0.15s ease;
+}
+
+.ghost-btn:hover {
+  background: rgba(255, 255, 255, 0.04);
+  border-color: rgba(255, 255, 255, 0.22);
+}
+
+/* 노래 리스트 */
+
+.song-list {
+  display: flex;
+  flex-direction: column;
+  gap: 10px;
+  margin-top: 10px;
+}
+
+.song-item {
+  display: flex;
+  gap: 12px;
+  padding: 10px 12px;
+  border-radius: 14px;
+  background: rgba(10, 10, 18, 0.9);
+  border: 1px solid rgba(255, 255, 255, 0.04);
+  align-items: center;
+}
+
+.song-main {
+  flex: 1;
+  display: flex;
+  flex-direction: column;
+  gap: 4px;
+}
+
+.song-title-row {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 4px;
+  align-items: baseline;
+}
+
+.song-title {
+  font-weight: 600;
+  font-size: 14px;
+}
+
+.song-artist {
+  font-size: 13px;
+  color: var(--text-sub);
+}
+
+.song-meta {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  font-size: 12px;
+  color: var(--text-sub);
+}
+
+.tag {
+  padding: 2px 8px;
+  border-radius: 999px;
+  background: var(--accent-soft);
+  color: var(--accent);
+  font-size: 11px;
+}
+
+.meta-text {
+  font-size: 12px;
+}
+
+.link-btn {
+  margin-top: 4px;
+  display: inline-flex;
+  align-items: center;
+  padding: 4px 8px;
+  border-radius: 999px;
+  border: 1px solid rgba(255, 255, 255, 0.14);
+  font-size: 11px;
+  color: var(--text-main);
+  text-decoration: none;
+}
+
+.link-btn:hover {
+  border-color: var(--accent);
+}
+
+/* 좋아요 버튼 */
+
+.like-btn {
+  border-radius: 999px;
+  border: none;
+  background: #1f1f2b;
+  color: var(--text-main);
+  font-size: 12px;
+  padding: 6px 10px;
+  cursor: pointer;
+  white-space: nowrap;
+  transition: background 0.15s ease;
+}
+
+.like-btn:hover {
+  background: #292938;
+}
+
+/* 로그인 화면 */
+
+.auth-card {
+  width: 100%;
+  max-width: 420px;
+  margin: auto;
+  padding: 26px 22px 28px;
+  border-radius: 22px;
+  background: radial-gradient(circle at top, #26263a, #101019 60%);
+  box-shadow: var(--shadow-soft);
+  border: 1px solid rgba(255, 255, 255, 0.06);
+  display: flex;
+  flex-direction: column;
+  gap: 12px;
+}
+
+.auth-subtitle {
+  margin: 0 0 4px;
+  font-size: 13px;
+  color: var(--text-sub);
+}
+
+.auth-form {
+  margin-top: 10px;
+  display: flex;
+  flex-direction: column;
+  gap: 10px;
+}
+
+.app-center-message {
+  margin: auto;
+  color: var(--text-sub);
+}
+
+/* 반응형 */
+
+@media (max-width: 900px) {
+  .app-shell {
+    padding: 16px 14px 22px;
+  }
+
+  .layout {
+    grid-template-columns: 1fr;
+  }
+}
