@@ -310,6 +310,6 @@ app.get("*", (req, res, next) => {
 });
 
 // ----- 서버 시작 -----
-app.listen(PORT, () => {
+app.listen(PORT, "0.0.0.0", () => {
   console.log(`Server running on http://localhost:${PORT}`);
 });
