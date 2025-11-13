@@ -34,6 +34,64 @@ function getNextId(list) {
   return Math.max(...list.map((x) => x.id)) + 1;
 }
 
+function sanitizeText(input, maxLen = 100) {
+  if (typeof input !== "string") return "";
+  const trimmed = input.trim();
+  if (!trimmed) return "";
+  if (trimmed.length > maxLen) {
+    return trimmed.slice(0, maxLen);
+  }
+  return trimmed;
+}
+
+// 유튜브 URL만 허용 + 안전한 형태로 변환
+function normalizeYouTubeUrl(raw) {
+  if (typeof raw !== "string") return null;
+  const trimmed = raw.trim();
+  if (!trimmed) return null;
+
+  let url;
+  try {
+    url = new URL(trimmed);
+  } catch {
+    return null;
+  }
+
+  const hostname = url.hostname.toLowerCase();
+
+  const allowedHosts = [
+    "www.youtube.com",
+    "youtube.com",
+    "m.youtube.com",
+    "youtu.be",
+  ];
+
+  if (!allowedHosts.includes(hostname)) {
+    return null; // 유튜브 도메인만 허용
+  }
+
+  let videoId = null;
+
+  if (hostname === "youtu.be") {
+    // https://youtu.be/VIDEOID
+    videoId = url.pathname.slice(1);
+  } else {
+    // https://www.youtube.com/watch?v=VIDEOID 형태
+    videoId = url.searchParams.get("v");
+  }
+
+  if (!videoId) return null;
+
+  // 영상 ID 형식 간단 검증 (영문, 숫자, -, _ 정도만 허용)
+  if (!/^[a-zA-Z0-9_-]{5,20}$/.test(videoId)) {
+    return null;
+  }
+
+  // 우리가 안전하다고 판단하는 표준 URL로 재조립
+  return `https://www.youtube.com/watch?v=${videoId}`;
+}
+
+
 // ----- Express 기본 설정 -----
 const app = express();
 const PORT = 4000;
@@ -128,16 +186,21 @@ app.get("/api/me", authMiddleware, (req, res) => {
 app.post("/api/songs", authMiddleware, (req, res) => {
   const { title, artist, genre, youtubeUrl } = req.body;
 
-  if (!title || !artist || !genre || !youtubeUrl) {
-    return res.status(400).json({ message: "모든 필드를 입력하세요." });
+  const safeTitle = sanitizeText(title, 100);
+  const safeArtist = sanitizeText(artist, 80);
+  const safeGenre = sanitizeText(genre, 40);
+  const safeYoutube = normalizeYouTubeUrl(youtubeUrl);
+
+  if (!safeTitle || !safeArtist || !safeGenre || !safeYoutube) {
+    return res.status(400).json({ message: "입력값이 올바르지 않습니다." });
   }
 
   const song = {
     id: getNextId(db.songs),
-    title: title.trim(),
-    artist: artist.trim(),
-    genre: genre.trim(),
-    youtube_url: youtubeUrl.trim(),
+    title: safeTitle,
+    artist: safeArtist,
+    genre: safeGenre,
+    youtube_url: safeYoutube, // 여기 중요
     owner_id: req.user.id,
     created_at: new Date().toISOString(),
   };
