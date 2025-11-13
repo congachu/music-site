@@ -1,0 +1,19 @@
+<svg width="256" height="256" viewBox="0 0 256 256" xmlns="http://www.w3.org/2000/svg">
+  <defs>
+    <radialGradient id="glow" cx="50%" cy="30%" r="70%">
+      <stop offset="0%" stop-color="#FFE5D0"></stop>
+      <stop offset="45%" stop-color="#FF8A33"></stop>
+      <stop offset="80%" stop-color="#FF7710"></stop>
+      <stop offset="100%" stop-color="#E34200"></stop>
+    </radialGradient>
+    <filter id="shadow" x="-50%" y="-50%" width="200%" height="200%">
+      <feDropShadow dx="0" dy="0" stdDeviation="12" flood-color="#FF7710" flood-opacity="0.5"></feDropShadow>
+    </filter>
+  </defs>
+
+  <!-- Background Glow Circle -->
+  <circle cx="128" cy="128" r="110" fill="url(#glow)" filter="url(#shadow)"></circle>
+
+  <!-- Music Note -->
+  <path d="M160 50v90.5a30 30 0 1 1-18-27.9V75l-50 12.5v63a30 30 0 1 1-18-27.9V77.2a12 12 0 0 1 8.8-11.7l64-16.8A12 12 0 0 1 160 60z" fill="white" opacity="0.92"></path>
+</svg>
