@@ -16,6 +16,7 @@ const API_BASE = import.meta.env.VITE_API_BASE || "/api";
 
 const MAX_RECS_PREVIEW = 3;
 const MAX_SONGS_PREVIEW = 3;
+const MAX_LIKES_PREVIEW = 3;
 
 function App() {
   const [user, setUser] = useState(null);
@@ -25,6 +26,7 @@ function App() {
   const [sort, setSort] = useState("recent");
   const [genres, setGenres] = useState([]);
   const [recs, setRecs] = useState([]);
+  const [liked, setLiked] = useState([]);
 
   const [newSong, setNewSong] = useState({
     title: "",
@@ -35,7 +37,7 @@ function App() {
 
   const [loading, setLoading] = useState(true);
 
-  // home | recs | songs
+  // home | recs | songs | likes
   const [view, setView] = useState("home");
 
   // 첫 진입 시 로그인 상태 확인
@@ -83,13 +85,23 @@ function App() {
       .catch(console.error);
   }, []);
 
+  const loadLiked = useCallback(() => {
+    fetch(`${API_BASE}/my-likes`, {
+      credentials: "include",
+    })
+      .then((res) => res.json())
+      .then(setLiked)
+      .catch(console.error);
+  }, []);
+
   useEffect(() => {
     if (user) {
       loadSongs();
       loadGenres();
       loadRecommendations();
+      loadLiked();
     }
-  }, [user, loadSongs, loadGenres, loadRecommendations]);
+  }, [user, loadSongs, loadGenres, loadRecommendations, loadLiked]);
 
   const handleLogin = (e) => {
     e.preventDefault();
@@ -119,6 +131,7 @@ function App() {
       setUser(null);
       setSongs([]);
       setRecs([]);
+      setLiked([]);
       setView("home");
     });
   };
@@ -156,6 +169,7 @@ function App() {
         loadSongs();
         loadGenres();
         loadRecommendations();
+        loadLiked();
       })
       .catch((e) => alert(e.message));
   };
@@ -169,6 +183,7 @@ function App() {
       .then(() => {
         loadSongs();
         loadRecommendations();
+        loadLiked();
       })
       .catch(console.error);
   };
@@ -211,7 +226,11 @@ function App() {
     <div className="app-root">
       <div className="app-shell">
         <header className="app-header">
-          <div className="logo-area" onClick={() => setView("home")} style={{ cursor: "pointer" }}>
+          <div
+            className="logo-area"
+            onClick={() => setView("home")}
+            style={{ cursor: "pointer" }}
+          >
             <div className="logo-dot" />
             <span className="logo-text">소소한 음악 추천</span>
           </div>
@@ -318,7 +337,7 @@ function App() {
                 </div>
               </section>
 
-              {/* 오른쪽: 추천 + 리스트 (프리뷰) */}
+              {/* 오른쪽: 추천 + 내가 좋아요한 곡 + 전체 리스트 (프리뷰) */}
               <section className="right-pane">
                 <div className="card">
                   <h2 className="card-title">추천 노래</h2>
@@ -341,6 +360,33 @@ function App() {
                           onClick={() => setView("recs")}
                         >
                           추천 더보기
+                        </button>
+                      )}
+                    </>
+                  )}
+                </div>
+
+                <div className="card">
+                  <h2 className="card-title">내가 좋아요한 곡</h2>
+                  <p className="card-subtitle">
+                    좋아요를 눌렀던 곡들을 모아두었어요.
+                  </p>
+                  {liked.length === 0 ? (
+                    <div className="empty-state">
+                      아직 좋아요한 곡이 없습니다.
+                    </div>
+                  ) : (
+                    <>
+                      <SongList
+                        songs={liked.slice(0, MAX_LIKES_PREVIEW)}
+                        onToggleLike={toggleLike}
+                      />
+                      {liked.length > MAX_LIKES_PREVIEW && (
+                        <button
+                          className="ghost-btn more-btn"
+                          onClick={() => setView("likes")}
+                        >
+                          좋아요한 곡 더보기
                         </button>
                       )}
                     </>
@@ -373,17 +419,23 @@ function App() {
               </section>
             </>
           ) : (
-            // 추천 전체 / 전체 리스트 전용 화면
+            // 추천 전체 / 전체 리스트 / 좋아요한 곡 전용 화면
             <section className="right-pane" style={{ gridColumn: "1 / -1" }}>
               <div className="card">
                 <div className="card-header-row">
                   <div>
                     <h2 className="card-title">
-                      {view === "recs" ? "추천 노래 모아보기" : "전체 / 장르별 노래 모아보기"}
+                      {view === "recs"
+                        ? "추천 노래 모아보기"
+                        : view === "likes"
+                        ? "내가 좋아요한 곡 모아보기"
+                        : "전체 / 장르별 노래 모아보기"}
                     </h2>
                     <p className="card-subtitle">
                       {view === "recs"
                         ? "내가 누른 좋아요를 기준으로 추천된 곡들을 한 번에 모아봤어요."
+                        : view === "likes"
+                        ? "지금까지 좋아요를 눌렀던 곡들을 한 눈에 볼 수 있어요."
                         : "현재 필터 / 정렬 기준에 맞는 모든 곡을 한 번에 볼 수 있어요."}
                     </p>
                   </div>
@@ -430,6 +482,14 @@ function App() {
                     </div>
                   ) : (
                     <SongList songs={recs} onToggleLike={toggleLike} />
+                  )
+                ) : view === "likes" ? (
+                  liked.length === 0 ? (
+                    <div className="empty-state">
+                      아직 좋아요한 곡이 없습니다.
+                    </div>
+                  ) : (
+                    <SongList songs={liked} onToggleLike={toggleLike} />
                   )
                 ) : songs.length === 0 ? (
                   <div className="empty-state">
@@ -482,4 +542,3 @@ function SongList({ songs, onToggleLike }) {
 }
 
 export default App;
-

@@ -360,6 +360,43 @@ app.get("/api/genres", authMiddleware, (req, res) => {
   const genres = Array.from(set).sort();
   res.json(genres);
 });
+// ----- 내가 좋아요한 곡 목록 -----
+app.get("/api/my-likes", authMiddleware, (req, res) => {
+  const userId = req.user.id;
+
+  const myLikes = db.likes.filter((l) => l.user_id === userId);
+
+  if (myLikes.length === 0) {
+    return res.json([]);
+  }
+
+  const likedAtMap = {};
+  myLikes.forEach((l) => {
+    likedAtMap[l.song_id] = l.created_at;
+  });
+
+  const result = myLikes
+    .map((l) => {
+      const song = db.songs.find((s) => s.id === l.song_id);
+      if (!song) return null;
+
+      const like_count = db.likes.filter((x) => x.song_id === song.id).length;
+      return {
+        ...song,
+        like_count,
+        liked_at: likedAtMap[song.id],
+      };
+    })
+    .filter(Boolean)
+    .sort(
+      (a, b) =>
+        new Date(b.liked_at).getTime() - new Date(a.liked_at).getTime()
+    );
+
+  res.json(result);
+});
+
+
 // --- React 정적 파일 서빙 설정 ---
 const clientBuildPath = path.join(__dirname, "..", "client", "dist");
 
